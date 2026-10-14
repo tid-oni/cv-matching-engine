@@ -1,0 +1,48 @@
+{
+  "baseline": {
+    "spearman": 0.2327,
+    "pearson": 0.2156,
+    "ndcg@5": 0.5479,
+    "ndcg@10": 0.5614,
+    "mrr": 0.0071,
+    "training_time": "0m (pretrained)"
+  },
+  "finetuned": {
+    "spearman": 0.8165,
+    "pearson": 0.8358,
+    "ndcg@5": 0.5479,
+    "ndcg@10": 0.5614,
+    "mrr": 0.0084,
+    "training_time": "38.4m"
+  },
+  "improvement": {
+    "spearman": "+250.9%",
+    "pearson": "+287.7%",
+    "ndcg@5": "+0.0%",
+    "ndcg@10": "+0.0%",
+    "mrr": "+18.3%"
+  },
+  "training_time_minutes": 38.4,
+  "dataset_stats": {
+    "total_pairs": 8733,
+    "train_pairs": 6986,
+    "eval_pairs": 1747,
+    "hard_negatives": 503,
+    "sources": [
+      "cnamuangtoun/resume-job-description-fit",
+      "netsol/resume-score-details"
+    ]
+  },
+  "training_config": {
+    "base_model": "BAAI/bge-base-en-v1.5",
+    "epochs": 5,
+    "batch_size": 16,
+    "loss": [
+      "CosineSimilarityLoss",
+      "MultipleNegativesRankingLoss"
+    ],
+    "learning_rate": "2e-5",
+    "weight_decay": "0.01",
+    "warmup": "10% of total steps"
+  }
+}

@@ -1,0 +1,4 @@
+Model,Spearman,Pearson,NDCG@5,NDCG@10,MRR,Training_Time
+Baseline (BAAI/bge-large-en-v1.5),0.2327,0.2156,0.5479,0.5614,0.0071,0m (pretrained)
+Fine-tuned (BAAI/bge-large-en-v1.5),0.8165,0.8358,0.5479,0.5614,0.0084,38.4m
+Improvement,+250.9%,+287.7%,+0.0%,+0.0%,+18.3%,--

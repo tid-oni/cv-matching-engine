@@ -1,0 +1,12 @@
+node_modules/
+__pycache__/
+.pytest_cache/
+.claude/
+*.db
+*.log
+app/models/
+app/uploads/
+comp/
+hna/
+.env
+frontend/dist/

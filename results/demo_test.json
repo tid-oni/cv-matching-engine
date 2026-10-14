@@ -1,0 +1,65 @@
+{
+  "test_cases": [
+    {
+      "name": "Excellent Match",
+      "cv_summary": "Senior Python developer, 8 years exp, FastAPI, PostgreSQL, Docker, AWS, 45 GitHub repos",
+      "cv_text": "John Smith | Senior Software Engineer\ngithub.com/johnsmith\n\nSKILLS: Python, FastAPI, PostgreSQL, Docker, AWS, Git, Redis, Celery\n\nEXPERIENCE:\nSenior Backend Engineer - TechCorp (2020-2024)\n- Built REST APIs using FastAPI serving 1M+ requests/day\n- Managed PostgreSQL databases with query optimization\n- Deployed microservices on AWS ECS with Docker\n- Implemented Redis caching reducing latency by 60%\n\nSoftware Engineer - StartupXYZ (2018-2020)\n- Flask applications with PostgreSQL backend\n- CI/CD pipelines using GitHub Actions\n\nEDUCATION: B.S. Computer Science (2018)",
+      "job_text": "Senior Python Backend Engineer\n\nRequirements:\n- 5+ years Python experience\n- FastAPI or Django REST framework\n- PostgreSQL or MySQL\n- Docker and Kubernetes\n- AWS or GCP cloud experience\n- Microservices architecture",
+      "score": 92.5,
+      "semantic_score": 91.0,
+      "skill_proximity_score": 95.0,
+      "tfidf_score": 82.0,
+      "url_boost": 12.0,
+      "matched_skills": ["Python", "FastAPI", "PostgreSQL", "Docker", "AWS", "Redis"],
+      "partial_skills": [
+        {"skill": "Kubernetes", "matched_via": "Docker", "similarity": 0.65}
+      ],
+      "missing_skills": ["Kubernetes"],
+      "explanation": "You scored 92.5/100 for this position.\n\nExcellent match — you meet most core requirements. This role is a great fit for your profile.\n\n✅ Strong matches:\n- Python: exactly what this role needs\n- FastAPI: exactly what this role needs\n- PostgreSQL: strong requirement match\n- Docker: strong requirement match\n- AWS: strong requirement match\n\n🔗 Partial matches:\n- Kubernetes (related to Docker): covers approximately 65% of the requirement\n\n❌ Missing skills:\n- No significant gaps found\n\n🔗 Profile signals:\n- GitHub: 45 repos detected, Python/FastAPI signals found, +12 boost\n\n📊 Section breakdown:\n- Experience relevance: 93%\n- Skills alignment: 97%\n- Education fit: 72%\n- Projects portfolio: 88%\n\n💡 Recommendation:\nYour GitHub profile strengthens this application. Lead with your FastAPI microservices work.\n\n🚀 Next steps: Apply now. Tailor your cover letter around your AWS + FastAPI production experience.",
+      "language_detected": "en",
+      "model_used": "BAAI/bge-large-en-v1.5-finetuned"
+    },
+    {
+      "name": "Partial Match",
+      "cv_summary": "Frontend developer, React, CSS, Tailwind, Vue, 5 years experience",
+      "cv_text": "Sarah Johnson | Frontend Developer\nlinkedin.com/in/sarahjohnson\n\nSKILLS: React, Vue, CSS, Tailwind, HTML, JavaScript, Bootstrap, Figma, Git\n\nEXPERIENCE:\nFrontend Developer - WebAgency (2020-2024)\n- Built SPAs using React and Vue\n- Responsive design with Tailwind CSS and Bootstrap\n- REST API integration\n\nJunior Developer - FreelanceWork (2019-2020)\n- HTML/CSS landing pages\n- Basic JavaScript interactivity\n\nEDUCATION: B.A. Design + CS minor (2019)",
+      "job_text": "Full-Stack Engineer\n\nWe need a full-stack engineer to build and maintain our platform.\n\nRequirements:\n- React or Angular frontend\n- Node.js backend development\n- PostgreSQL or MongoDB database\n- REST API design experience\n- Docker containerization",
+      "score": 71.0,
+      "semantic_score": 72.0,
+      "skill_proximity_score": 68.0,
+      "tfidf_score": 58.0,
+      "url_boost": 5.0,
+      "matched_skills": ["React", "HTML", "CSS", "JavaScript"],
+      "partial_skills": [
+        {"skill": "Angular", "matched_via": "Vue", "similarity": 0.70},
+        {"skill": "MongoDB", "matched_via": "PostgreSQL", "similarity": 0.55}
+      ],
+      "missing_skills": ["Node.js", "PostgreSQL", "Docker"],
+      "explanation": "You scored 71.0/100 for this position.\n\nStrong match with some gaps — definitely apply. Address Node.js in your cover letter.\n\n✅ Strong matches:\n- React: exactly what this role needs\n- JavaScript: strong requirement match\n- HTML/CSS: strong requirement match\n\n🔗 Partial matches:\n- Angular (related to Vue): covers approximately 70% of the requirement\n- MongoDB (related to PostgreSQL): covers approximately 55% of the requirement\n\n❌ Missing skills:\n- Node.js: required but not found in your profile\n- Docker: important for this role\n\n🔗 Profile signals:\n- LinkedIn profile detected, +5 boost\n\n📊 Section breakdown:\n- Experience relevance: 74%\n- Skills alignment: 71%\n- Education fit: 65%\n- Projects portfolio: 70%\n\n💡 Recommendation:\nEmphasize React and JavaScript in your application. Mention you are learning Node.js if applicable.\n\n🚀 Next steps: Apply and highlight your REST API integration experience. Consider a small Node.js side project to address the gap.",
+      "language_detected": "en",
+      "model_used": "BAAI/bge-large-en-v1.5-finetuned"
+    },
+    {
+      "name": "Poor Match",
+      "cv_summary": "Accountant, Excel, SAP, financial reporting, 10 years experience",
+      "cv_text": "Michael Brown | Senior Accountant\n\nSKILLS: Microsoft Excel, SAP, QuickBooks, Financial Reporting, GAAP, Tax Preparation, Budgeting, Forecasting\n\nEXPERIENCE:\nSenior Accountant - BigCorp (2016-2024)\n- Managed financial reporting for $50M revenue company\n- SAP ERP system administration\n- Tax compliance and audit preparation\n- Budget forecasting and variance analysis\n\nAccountant - SmallFirm (2014-2016)\n- General ledger maintenance\n- Monthly financial close\n\nEDUCATION: B.S. Accounting, CPA Certified (2014)",
+      "job_text": "Machine Learning Engineer\n\nWe are hiring a Python ML Engineer to build intelligent systems.\n\nRequirements:\n- Python (3+ years)\n- TensorFlow or PyTorch\n- Scikit-learn for classical ML\n- Data pipelines with Pandas and NumPy\n- MLOps: Docker, MLflow, cloud deployment\n- Experience with NLP or computer vision",
+      "score": 18.5,
+      "semantic_score": 12.0,
+      "skill_proximity_score": 0.0,
+      "tfidf_score": 8.0,
+      "url_boost": 0.0,
+      "matched_skills": [],
+      "partial_skills": [],
+      "missing_skills": ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "Pandas", "NumPy", "Docker", "MLflow"],
+      "explanation": "You scored 18.5/100 for this position.\n\nWeak match — significant skill gaps exist. Consider building experience in Python and ML before applying.\n\n✅ Strong matches:\n- No exact skill matches found\n\n🔗 Partial matches:\n- No partial matches\n\n❌ Missing skills:\n- Python: required but not found in your profile\n- TensorFlow: required but not found in your profile\n- PyTorch: important for this role\n- Scikit-learn: required but not found in your profile\n- Pandas, NumPy, Docker, MLflow: required but not found\n\n🔗 Profile signals:\n- No external profile URLs detected\n\n📊 Section breakdown:\n- Experience relevance: 10%\n- Skills alignment: 2%\n- Education fit: 35%\n- Projects portfolio: 8%\n\n💡 Recommendation:\nThis role needs skills significantly different from your current profile. Consider roles requiring data analysis with Excel or SAP instead.\n\n🚀 Next steps: If interested in ML, consider starting with Python fundamentals and a free ML course (fast.ai, Coursera). This transition typically takes 6-12 months.",
+      "language_detected": "en",
+      "model_used": "BAAI/bge-large-en-v1.5-finetuned"
+    }
+  ],
+  "metadata": {
+    "generated": "2026-04-26",
+    "engine_version": "2.0.0",
+    "note": "These test cases are pre-populated for demonstration. Run the full matching pipeline to generate live results."
+  }
+}
