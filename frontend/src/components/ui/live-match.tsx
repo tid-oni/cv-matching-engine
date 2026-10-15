@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { motion, AnimatePresence, animate } from "motion/react";
 import { Sparkles, Zap, Loader2, RotateCcw, Brain, AlertCircle, Check } from "lucide-react";
 import { matchText, type LiveMatchResult } from "@/api/platform";
-import { MetalButton } from "@/components/ui/metal-button";
 import { WebGLShader } from "@/components/ui/web-gl-shader";
 
 /* ── lazy-mounted shader (matches landing pattern) ──────────────── */
@@ -175,8 +174,8 @@ export function LiveMatch() {
 
         {/* playground card */}
         <div
-          className="gs-reveal rounded-3xl border border-white/[0.08] p-5 sm:p-7"
-          style={{ background: "rgba(10,14,26,0.78)" }}
+          className="gs-reveal rounded-3xl border border-white/[0.06] p-5 sm:p-7"
+          style={{ background: "rgba(255,255,255,0.016)" }}
         >
           <div className="grid md:grid-cols-2 gap-4">
             <div>
@@ -204,11 +203,26 @@ export function LiveMatch() {
           </div>
 
           <div className="flex items-center gap-3 mt-4 flex-wrap">
-            <button onClick={run} disabled={loading} className="relative group inline-block disabled:opacity-50">
+            <button onClick={run} disabled={loading}
+              className="group relative inline-block disabled:opacity-50 disabled:cursor-not-allowed">
               <span className="btn-halo" />
-              <MetalButton className="relative h-11 px-8 text-sm gap-2">
-                {loading ? <><Loader2 size={14} className="animate-spin" /> Scoring…</> : <><Zap size={14} /> Run match</>}
-              </MetalButton>
+              <span
+                className="relative flex items-center justify-center gap-2 h-11 px-8 rounded-full text-sm font-bold text-black overflow-hidden transition-transform duration-200 group-hover:scale-[1.03] group-active:scale-95"
+                style={{
+                  background: "linear-gradient(135deg, #22d3ee 0%, #a78bfa 50%, #f472b6 100%)",
+                  boxShadow: "0 10px 30px rgba(167,139,250,0.38), inset 0 1px 0 rgba(255,255,255,0.55)",
+                }}
+              >
+                {/* glossy top highlight */}
+                <span className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
+                  style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.45), transparent)" }} />
+                {/* sweeping shine on hover */}
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out pointer-events-none"
+                  style={{ background: "linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.45) 50%, transparent 65%)" }} />
+                <span className="relative flex items-center gap-2">
+                  {loading ? <><Loader2 size={14} className="animate-spin" /> Scoring…</> : <><Zap size={14} /> Run match</>}
+                </span>
+              </span>
             </button>
             <button
               onClick={reset}

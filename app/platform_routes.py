@@ -608,20 +608,27 @@ def _generate_explanation(cv_text: str, job: JobOffer, result: dict) -> dict:
     def _prose(fr: bool) -> dict:
         join = ", "
         # ── Recruiter: why hire ──
+        _m3 = (join.join(matched[:3]) + ("…" if len(matched) > 3 else "")) if matched else ""
         wh = []
         if score >= 82:
             wh.append(
-                f"Profil exceptionnel pour {job_title} — l'un des plus forts du vivier "
-                f"({score:.1f}% de score composite)." if fr else
-                f"Exceptional fit for {job_title} — one of the strongest profiles in the pipeline "
-                f"({score:.1f}% composite score)."
+                f"Profil exceptionnel pour {job_title} — l'un des plus forts du vivier ({score:.1f}% de score composite). "
+                f"Trois raisons le justifient : ils maîtrisent {_m3 or 'les compétences clés'} (le cœur du poste), "
+                f"leur parcours s'aligne sémantiquement à {semantic:.0f}% avec la fiche, et ils couvrent {skill_pct:.0f}% des compétences requises — "
+                f"contribution attendue quasi immédiate." if fr else
+                f"Exceptional fit for {job_title} — one of the strongest profiles in the pipeline ({score:.1f}% composite). "
+                f"Three reasons stand out: they bring {_m3 or 'the key skills'} (the core of the role), "
+                f"their background aligns semantically at {semantic:.0f}% with the description, and they cover {skill_pct:.0f}% of required skills — "
+                f"contribution should be near-immediate."
             )
         elif score >= 70:
             wh.append(
-                f"Candidat sérieux pour {job_title}. Son expérience recoupe nettement les exigences "
-                f"principales ({score:.1f}% composite), avec {skill_pct:.0f}% des compétences requises présentes." if fr else
-                f"Strong contender for {job_title}. Their experience meaningfully overlaps the core "
-                f"requirements ({score:.1f}% composite), with {skill_pct:.0f}% of required skills present."
+                f"Candidat sérieux pour {job_title} ({score:.1f}% composite). Concrètement, ils apportent {_m3 or 'les compétences clés du poste'}, "
+                f"leur expérience recoupe les exigences principales sur le fond (sémantique {semantic:.0f}%), "
+                f"et {skill_pct:.0f}% des compétences requises sont présentes — un socle solide pour démarrer vite." if fr else
+                f"Strong contender for {job_title} ({score:.1f}% composite). Concretely, they bring {_m3 or 'the key skills'}, "
+                f"their experience overlaps the core requirements at a substance level (semantic {semantic:.0f}%), "
+                f"and {skill_pct:.0f}% of required skills are present — a solid base to start fast."
             )
         elif score >= 55:
             wh.append(
@@ -665,6 +672,31 @@ def _generate_explanation(cv_text: str, job: JobOffer, result: dict) -> dict:
                 f"Avec {skill_pct:.0f}% de couverture, contribution quasi immédiate." if fr else
                 f"With {skill_pct:.0f}% skill coverage, near-immediate contribution."
             )
+        if len(matched) >= 6:
+            wh.append(
+                f"Grande étendue technique : {len(matched)} compétences requises distinctes — polyvalence au-delà d'une seule niche." if fr else
+                f"Broad technical footprint: {len(matched)} distinct required skills — versatility beyond a single niche."
+            )
+        if 60 <= semantic < 72:
+            wh.append(
+                f"Profil adjacent au poste (sémantique {semantic:.0f}%) : socle transférable qui se convertit en général rapidement." if fr else
+                f"Reads adjacent to the role (semantic {semantic:.0f}%) — a transferable foundation that usually converts quickly."
+            )
+        if tfidf >= 68:
+            wh.append(
+                f"Fort recouvrement terminologique (lexical {tfidf:.0f}%) : le CV emploie littéralement le vocabulaire du poste, ce qui aide aussi au filtrage ATS." if fr else
+                f"Strong terminology overlap (lexical {tfidf:.0f}%) — the CV literally uses the role's vocabulary, which also helps ATS/keyword screens."
+            )
+        if len(missing) == 0 and skill_total > 0:
+            wh.append(
+                "Aucune compétence requise manquante — recrutement à faible risque côté couverture." if fr else
+                "No required skill is missing — a low-risk hire from a coverage standpoint."
+            )
+        if score >= 82:
+            wh.append(
+                "À traiter en priorité absolue : les profils de ce niveau sont rares et reçoivent souvent des offres concurrentes — agissez vite." if fr else
+                "Treat as top priority — profiles at this level are rare and often field competing offers, so move fast."
+            )
 
         # ── Recruiter: concerns ──
         wn = []
@@ -698,6 +730,21 @@ def _generate_explanation(cv_text: str, job: JobOffer, result: dict) -> dict:
             wn.append(
                 "Aucun signal externe (GitHub/LinkedIn/portfolio) détecté — le score n'inclut donc aucun bonus URL ; ce n'est pas une pénalité." if fr else
                 "No external signals (GitHub/LinkedIn/portfolio) detected — the score includes no URL bonus; this is not a penalty."
+            )
+        if tfidf < 50 and skill_total > 0:
+            wn.append(
+                f"Recouvrement lexical faible ({tfidf:.0f}%) : même si le sens est proche, le CV sous-représente peut-être l'outillage exact — confirmer la pratique réelle." if fr else
+                f"Thin lexical overlap ({tfidf:.0f}%): even if the semantics are close, the CV may under-index on the exact tooling — confirm hands-on use."
+            )
+        if 1 <= len(matched) <= 2 and missing:
+            wn.append(
+                "Peu de compétences requises ressortent — valider la profondeur réelle plutôt qu'une simple familiarité." if fr else
+                "Only a couple of required skills surfaced — validate real depth rather than passing familiarity."
+            )
+        if score < 55:
+            wn.append(
+                "Signaux de séniorité/portée limités pour le niveau du poste — sonder la propriété des sujets et l'échelle des systèmes gérés." if fr else
+                "Limited seniority/scope signals for this role's level — probe ownership and the scale of systems handled."
             )
         if not wn:
             wn.append(
@@ -749,44 +796,96 @@ def _generate_explanation(cv_text: str, job: JobOffer, result: dict) -> dict:
                 "Validate depth of experience in the interview."
             )
 
-        # ── Candidate message (growth tone) ──
+        # ── Recruiter: suggested interview questions (concrete, role-specific) ──
+        iq = []
+        if missing:
+            top = missing[:2]
+            iq.append(
+                f"Comment monteriez-vous en compétence sur {' et '.join(top)} ? Avez-vous utilisé quelque chose d'adjacent en production ?" if fr else
+                f"How would you ramp up on {' and '.join(top)}? Have you used anything adjacent in production?"
+            )
+        if matched:
+            iq.append(
+                f"Décrivez un projet concret où vous avez utilisé {matched[0]} : la décision technique la plus difficile et le compromis retenu." if fr else
+                f"Walk me through a real project where you used {matched[0]} — the hardest technical decision and the trade-off you made."
+            )
+        if score >= 70:
+            iq.append(
+                "Racontez le système le plus complexe que vous ayez conçu de bout en bout : votre rôle, l'échelle et ce que vous changeriez aujourd'hui." if fr else
+                "Tell me about the most complex system you designed end-to-end — your role, the scale, and what you'd change today."
+            )
+        else:
+            iq.append(
+                "Donnez un exemple où vous avez appris une technologie inconnue sous contrainte de délai : votre méthode et le résultat." if fr else
+                "Give an example where you learned an unfamiliar technology under deadline — your approach and the outcome."
+            )
+        iq.append(
+            "Décrivez une situation où vous avez piloté une fonctionnalité de bout en bout : gestion de l'ambiguïté et façon de vous débloquer." if fr else
+            "Describe a time you owned a feature end-to-end — how you handled ambiguity and unblocked yourself."
+        )
+
+        # ── Candidate message — a rich, specific explanation of WHY this match landed ──
+        mlist    = (join.join(matched[:3]) + ("…" if len(matched) > 3 else "")) if matched else ""
+        misslist = join.join(missing[:3]) if missing else ""
         if score >= 82:
             c_head = f"Profil idéal pour {job_title}" if fr else f"Outstanding fit for {job_title}"
             c_fb = (
-                f"Votre CV est un match de premier rang ({score:.1f}%). Votre expérience colle de près au poste et vous couvrez {skill_pct:.0f}% des compétences requises." if fr else
-                f"Your CV is a top-tier match ({score:.1f}%). Your experience aligns closely with the role and you cover {skill_pct:.0f}% of the required skills."
+                f"Vous êtes un match de premier rang pour {job_title} ({score:.1f}%), et voici précisément pourquoi. "
+                f"D'abord, vous démontrez {mlist or 'les compétences attendues'} — le cœur même de ce que le poste exige. "
+                f"Ensuite, votre expérience présente une similarité sémantique de {semantic:.0f}% avec la fiche de poste : le modèle lit votre parcours comme réellement pertinent sur le fond, et pas un simple chevauchement de mots-clés. "
+                f"Enfin, vous couvrez {skill_pct:.0f}% des compétences requises ({len(matched)}/{skill_total or '—'}). Les profils de ce niveau sont rares." if fr else
+                f"You're a top-tier match for {job_title} ({score:.1f}%), and here's exactly why. "
+                f"First, you demonstrate {mlist or 'the expected skills'} — the very core of what this role needs. "
+                f"Second, your experience aligns semantically at {semantic:.0f}% with the job description: the model reads your background as genuinely on-topic, not just keyword overlap. "
+                f"Third, you cover {skill_pct:.0f}% of the required skills ({len(matched)}/{skill_total or '—'}). Profiles at this level are rare."
             )
             c_enc = ("Profitez de cette dynamique — un profil qui se remarque. Postulez à des postes similaires en confiance." if fr else
                      "Lean into this momentum — a profile that gets noticed. Apply to similar roles confidently.")
         elif score >= 70:
             c_head = f"Forte correspondance pour {job_title}" if fr else f"Strong match for {job_title}"
             c_fb = (
-                f"Vous avez obtenu {score:.1f}% — votre parcours s'aligne bien sur ce poste. Vous couvrez {skill_pct:.0f}% des compétences requises ({len(matched)}/{skill_total or '—'})." if fr else
-                f"You scored {score:.1f}% — your background aligns well with this role. You covered {skill_pct:.0f}% of required skills ({len(matched)}/{skill_total or '—'})."
+                f"Vous avez obtenu {score:.1f}% — une forte correspondance pour {job_title}, et plusieurs éléments l'expliquent. "
+                f"Vous apportez {mlist or 'les compétences clés du poste'}, votre expérience est jugée pertinente sur le fond (similarité sémantique de {semantic:.0f}%, au-delà des seuls mots-clés), "
+                f"et vous couvrez {skill_pct:.0f}% des compétences requises ({len(matched)}/{skill_total or '—'}). C'est cette combinaison qui vous place dans ce palier." if fr else
+                f"You scored {score:.1f}% — a strong match for {job_title}, and several things drive it. "
+                f"You bring {mlist or 'the key skills'}, your experience reads as genuinely on-topic ({semantic:.0f}% semantic similarity, beyond keywords alone), "
+                f"and you cover {skill_pct:.0f}% of the required skills ({len(matched)}/{skill_total or '—'}). That combination is what places you in this tier."
             )
             c_enc = ("Profil compétitif. Mettez en avant les projets concrets où vous avez utilisé ces compétences." if fr else
                      "Competitive profile. Highlight the concrete projects where you used these skills.")
         elif score >= 55:
             c_head = f"Correspondance modérée pour {job_title}" if fr else f"Moderate match for {job_title}"
             c_fb = (
-                f"Votre score est {score:.1f}% — un recoupement réel ({len(matched)} compétences) mais des lacunes pèsent sur votre rapidité de contribution." if fr else
-                f"Your score is {score:.1f}% — real overlap ({len(matched)} matched skills) but gaps affect how quickly you could contribute."
+                f"Votre score est {score:.1f}% — une correspondance modérée, fondée sur un signal réel. "
+                f"Vous correspondez sur {mlist or 'certaines compétences'} et votre profil recoupe le poste à {semantic:.0f}% de similarité sémantique. "
+                f"L'écart avec un palier supérieur vient surtout de {misslist or 'la profondeur attendue sur les domaines clés'}." if fr else
+                f"Your score is {score:.1f}% — a moderate match built on real signal. "
+                f"You match on {mlist or 'some skills'} and your profile overlaps the role at {semantic:.0f}% semantic similarity. "
+                f"The gap to a higher tier comes mainly from {misslist or 'expected depth in the core areas'}."
             )
             c_enc = ("Vous êtes plus proche que vous ne le pensez — les axes ci-dessous vous font franchir un palier." if fr else
                      "You're closer than you think — the areas below move you up a tier.")
         elif score >= 40:
             c_head = f"Correspondance limitée pour {job_title}" if fr else f"Limited match for {job_title}"
             c_fb = (
-                f"Vous avez {score:.1f}% — alignement partiel mais lacunes nettes. Votre CV apparaît adjacent à {job_title} plutôt que directement aligné." if fr else
-                f"You scored {score:.1f}% — partial alignment but clear gaps. Your CV reads adjacent to {job_title} rather than directly aligned."
+                f"Vous avez {score:.1f}% — un alignement partiel. "
+                f"{('Vous correspondez bien sur ' + mlist + ', mais ') if mlist else ''}votre CV apparaît adjacent à {job_title} plutôt que central "
+                f"(similarité sémantique de {semantic:.0f}%), et des compétences clés requises n'ont pas été détectées{(' : ' + misslist) if misslist else ''}." if fr else
+                f"You scored {score:.1f}% — partial alignment. "
+                f"{('You matched well on ' + mlist + ', but ') if mlist else ''}your CV reads adjacent to {job_title} rather than central "
+                f"({semantic:.0f}% semantic similarity), and key required skills weren't detected{(': ' + misslist) if misslist else ''}."
             )
             c_enc = ("Visez des postes plus proches de votre expertise, ou investissez dans les compétences ci-dessous." if fr else
                      "Target roles closer to your expertise, or invest in the skills below.")
         else:
             c_head = f"Pas adapté à {job_title} — mais des pistes utiles" if fr else f"Not a fit for {job_title} — but useful feedback"
             c_fb = (
-                f"Votre score était {score:.1f}%. L'IA n'a pas trouvé l'expérience clé exigée — ce n'est pas un jugement sur votre valeur, ce poste et votre CV pointent simplement dans des directions différentes." if fr else
-                f"Your score was {score:.1f}%. The AI didn't find the core experience required — not a judgement of your ability; this role and your CV simply point in different directions."
+                f"Votre score était {score:.1f}%. L'IA n'a pas trouvé l'expérience clé qu'exige {job_title} : "
+                f"l'alignement sémantique n'était que de {semantic:.0f}% et aucune des compétences requises n'est ressortie. "
+                f"Ce n'est pas un jugement sur votre valeur — ce poste et votre CV pointent simplement dans des directions différentes." if fr else
+                f"Your score was {score:.1f}%. The AI didn't find the core experience {job_title} requires: "
+                f"semantic alignment was only {semantic:.0f}% and none of the required skills surfaced. "
+                f"This isn't a judgement of your ability — this role and your CV simply point in different directions."
             )
             c_enc = ("Cherchez des postes correspondant à votre expertise réelle — votre score y sera bien plus élevé." if fr else
                      "Look for roles matching your real expertise — your score there will be far higher.")
@@ -797,41 +896,37 @@ def _generate_explanation(cv_text: str, job: JobOffer, result: dict) -> dict:
             c_fb += (f" Il vous manque {points_to_next:.0f} points pour atteindre « {nl} »." if fr
                      else f" You're {points_to_next:.0f} points from a {nl}.")
 
+        # Actionable areas are only for candidates who weren't a strong match —
+        # for strong/exceptional fits the "why you were chosen" explanation stands alone.
         areas = []
-        if missing:
-            areas.append({
-                "title": "Compétences à développer" if fr else "Develop these skills",
-                "items": missing[:6],
-                "detail": (
-                    f"Ce sont les {len(missing)} compétences requises non détectées sur votre CV. Pour chacune, réalisez un petit projet ou suivez un cours ciblé, puis ajoutez-le à votre CV." if fr else
-                    f"These are the {len(missing)} required skills not detected on your CV. For each, build a small project or take a focused course, then add it to your CV."
-                ),
-            })
-        if semantic < 60 and skill_total > 0:
-            areas.append({
-                "title": "Reformulez le vocabulaire de votre CV" if fr else "Reframe your CV language",
-                "items": [],
-                "detail": (
-                    f"Similarité sémantique de {semantic:.0f}% : vous employez sans doute un vocabulaire différent de celui du poste. Relisez la fiche et reprenez ses termes là où ils décrivent fidèlement votre travail." if fr else
-                    f"Semantic similarity was {semantic:.0f}%: you likely use different vocabulary than the role. Re-read the description and mirror its terms where they accurately describe your work."
-                ),
-            })
-        if matched and score < 70:
-            areas.append({
-                "title": "Valorisez vos atouts" if fr else "Highlight what you matched",
-                "items": matched[:5],
-                "detail": (
-                    "Rendez ces compétences visibles dans le premier tiers de votre CV, avec des résultats concrets (chiffres, échelle, impact)." if fr else
-                    "Make these skills visible in the first third of your CV, with concrete outcomes (numbers, scale, impact)."
-                ),
-            })
-        if not areas:
-            areas.append({
-                "title": "Continuez à postuler" if fr else "Keep applying",
-                "items": [],
-                "detail": ("Votre profil est déjà solide — le volume et la récence comptent." if fr else
-                           "Your profile is already strong — volume and recency matter."),
-            })
+        if score < 70:
+            if missing:
+                areas.append({
+                    "title": "Compétences à développer" if fr else "Develop these skills",
+                    "items": missing[:6],
+                    "detail": (
+                        f"Ce sont les {len(missing)} compétences requises non détectées sur votre CV. Pour chacune, réalisez un petit projet ou suivez un cours ciblé, puis ajoutez-la à votre CV." if fr else
+                        f"These are the {len(missing)} required skills not detected on your CV. For each, build a small project or take a focused course, then add it to your CV."
+                    ),
+                })
+            if semantic < 60 and skill_total > 0:
+                areas.append({
+                    "title": "Reformulez le vocabulaire de votre CV" if fr else "Reframe your CV language",
+                    "items": [],
+                    "detail": (
+                        f"Similarité sémantique de {semantic:.0f}% : vous employez sans doute un vocabulaire différent de celui du poste. Relisez la fiche et reprenez ses termes là où ils décrivent fidèlement votre travail." if fr else
+                        f"Semantic similarity was {semantic:.0f}%: you likely use different vocabulary than the role. Re-read the description and mirror its terms where they accurately describe your work."
+                    ),
+                })
+            if matched:
+                areas.append({
+                    "title": "Valorisez vos atouts" if fr else "Highlight what you matched",
+                    "items": matched[:5],
+                    "detail": (
+                        "Rendez ces compétences visibles dans le premier tiers de votre CV, avec des résultats concrets (chiffres, échelle, impact)." if fr else
+                        "Make these skills visible in the first third of your CV, with concrete outcomes (numbers, scale, impact)."
+                    ),
+                })
 
         # ── Metric breakdown (localized label + explanation) ──
         if fr:
@@ -894,6 +989,7 @@ def _generate_explanation(cv_text: str, job: JobOffer, result: dict) -> dict:
             "recommended_action": action,
             "ramp_up": ramp,
             "interview_probe_line": probe_line,
+            "interview_questions": iq,
             "metric_breakdown": bd,
             "candidate_message": {
                 "headline": c_head,
@@ -928,6 +1024,7 @@ def _generate_explanation(cv_text: str, job: JobOffer, result: dict) -> dict:
         "recommended_action": en["recommended_action"],
         "ramp_up":           en["ramp_up"],
         "interview_probe_line": en["interview_probe_line"],
+        "interview_questions": en["interview_questions"],
         "metric_breakdown":  en["metric_breakdown"],
         "candidate_message": en["candidate_message"],
         # Localized blocks — frontend renders i18n[lang]

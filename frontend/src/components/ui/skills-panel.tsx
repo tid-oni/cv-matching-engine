@@ -4,12 +4,18 @@ import { cn } from "@/lib/utils";
 
 type IconComponent = React.ComponentType<LucideProps>;
 
+/* The skill graph returns partial matches as { skill, matched_via, similarity } objects. */
+type PartialSkill = string | { skill: string; matched_via?: string; similarity?: number };
+
 interface SkillsPanelProps {
   matched?:   string[];
   missing?:   string[];
-  partial?:   string[];
+  partial?:   PartialSkill[];
   className?: string;
 }
+
+const partialLabel = (p: PartialSkill) =>
+  typeof p === "string" ? p : p.matched_via ? `${p.skill} ≈ ${p.matched_via}` : p.skill;
 
 function SkillChip({ label, chipClass, icon: Icon }: { label: string; chipClass: string; icon: IconComponent }) {
   return (
@@ -54,7 +60,7 @@ export function SkillsPanel({ matched = [], missing = [], partial = [], classNam
       <div className="h-px bg-white/[0.05]" />
       <Section title="Missing Skills"    skills={missing} textClass="text-white/45" chipClass="text-white/45 border-white/[0.1] bg-white/[0.04]"  icon={XCircle}      delay={0.1} />
       <div className="h-px bg-white/[0.05]" />
-      <Section title="Related / Partial" skills={partial} textClass="text-white/60" chipClass="text-white/60 border-white/[0.12] bg-white/[0.05]" icon={GitBranch}    delay={0.2} />
+      <Section title="Related / Partial" skills={[...new Set(partial.map(partialLabel))]} textClass="text-white/60" chipClass="text-white/60 border-white/[0.12] bg-white/[0.05]" icon={GitBranch}    delay={0.2} />
     </div>
   );
 }

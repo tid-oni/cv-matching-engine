@@ -114,6 +114,13 @@ class BatchMatchItem(BaseModel):
     explanation: str
     matched_skills: List[str] = Field(default_factory=list)
     missing_skills: List[str] = Field(default_factory=list)
+    # Breakdown used by the Batch page (same keys as the single-match response)
+    total_score: float = 0.0
+    semantic_score: float = 0.0
+    skill_proximity_score: float = 0.0
+    tfidf_score: float = 0.0
+    url_boost: float = 0.0
+    partial_skills: List[Any] = Field(default_factory=list)
 
 
 class HealthResponse(BaseModel):
@@ -480,6 +487,12 @@ async def match_batch(payload: BatchMatchRequest) -> List[BatchMatchItem]:
                 explanation=explanation,
                 matched_skills=list(score_dict.get("matched_skills", []) or []),
                 missing_skills=list(score_dict.get("missing_skills", []) or []),
+                total_score=score,
+                semantic_score=float(score_dict.get("semantic_score") or 0.0),
+                skill_proximity_score=float(score_dict.get("skill_proximity_score") or 0.0),
+                tfidf_score=float(score_dict.get("tfidf_score") or 0.0),
+                url_boost=float(score_dict.get("url_boost") or 0.0),
+                partial_skills=list(score_dict.get("partial_skills", []) or []),
             )
         )
 

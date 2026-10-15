@@ -10,3 +10,8 @@ comp/
 hna/
 .env
 frontend/dist/
+
+# private / report material
+make_ali_cv.py
+pfa-2025/
+gunt/

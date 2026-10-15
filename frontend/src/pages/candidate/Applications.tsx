@@ -18,28 +18,28 @@ const STATUS_CONFIG: Record<string, {
   headline: string; sub: string;
 }> = {
   pending: {
-    icon: <Clock size={15} />, color: "rgba(255,255,255,0.4)",
-    bg: "rgba(255,255,255,0.04)", headline: "Under Review",
+    icon: <Clock size={15} />, color: "rgba(var(--ink-rgb),0.5)",
+    bg: "rgba(var(--ink-rgb),0.05)", headline: "Under Review",
     sub: "Your application has been submitted and is waiting for the recruiter.",
   },
   reviewed: {
-    icon: <Star size={15} />, color: "rgba(255,255,255,0.55)",
-    bg: "rgba(255,255,255,0.06)", headline: "Being Reviewed",
+    icon: <Star size={15} />, color: "rgba(var(--ink-rgb),0.65)",
+    bg: "rgba(var(--ink-rgb),0.06)", headline: "Being Reviewed",
     sub: "The recruiter has opened your application. A decision is coming soon.",
   },
   shortlisted: {
-    icon: <CheckCircle size={15} />, color: "rgba(255,255,255,0.75)",
-    bg: "rgba(255,255,255,0.08)", headline: "You're Shortlisted!",
+    icon: <CheckCircle size={15} />, color: "rgba(var(--ink-rgb),0.85)",
+    bg: "rgba(var(--ink-rgb),0.08)", headline: "You're Shortlisted!",
     sub: "Great news — you made the shortlist! The recruiter will make a final decision soon.",
   },
   hired: {
-    icon: <CheckCircle size={15} />, color: "#ffffff",
-    bg: "rgba(255,255,255,0.1)", headline: "You Got the Offer!",
+    icon: <CheckCircle size={15} />, color: "rgb(var(--ink-rgb))",
+    bg: "rgba(var(--ink-rgb),0.1)", headline: "You Got the Offer!",
     sub: "Congratulations! The recruiter has selected you. See your full AI score and analysis below.",
   },
   rejected: {
-    icon: <XCircle size={15} />, color: "rgba(255,255,255,0.3)",
-    bg: "rgba(255,255,255,0.03)", headline: "Not Selected This Time",
+    icon: <XCircle size={15} />, color: "rgba(var(--ink-rgb),0.45)",
+    bg: "rgba(var(--ink-rgb),0.04)", headline: "Not Selected This Time",
     sub: "The recruiter made their decision. See your score and detailed feedback to improve for next time.",
   },
 };
@@ -61,15 +61,18 @@ function useCountUp(target: number, duration: number, go: boolean) {
 }
 
 function ScoreReveal({ score, label, status }: { score: number; label: string; status: string }) {
+  const { t } = useI18n();
   const [go, setGo] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => setGo(true), 400);
-    return () => clearTimeout(t);
+    const tm = setTimeout(() => setGo(true), 400);
+    return () => clearTimeout(tm);
   }, []);
   const display = useCountUp(score, 2, go);
   const pct = Math.min(score, 100);
-  const color = score >= 75 ? "#ffffff" : score >= 55 ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.35)";
-  const labelColor = score >= 75 ? "text-white" : score >= 55 ? "text-white/65" : "text-white/35";
+  // Theme-aware: ink colour flips white↔dark via --ink-rgb. Strong scores get the iridescent ring.
+  const strong = score >= 75, good = score >= 55;
+  const ring = strong ? "url(#scoreGradStrong)" : good ? "url(#scoreGradMid)" : `rgba(var(--ink-rgb),0.45)`;
+  const labelColor = strong ? "text-iridescent-soft" : good ? "text-white/70" : "text-white/45";
   const R = 56;
   const C = 2 * Math.PI * R;
   const offset = C - (C * pct) / 100;
@@ -84,23 +87,33 @@ function ScoreReveal({ score, label, status }: { score: number; label: string; s
     >
       <div className="relative w-44 h-44 mb-4">
         <svg className="w-full h-full -rotate-90" viewBox="0 0 128 128">
-          <circle cx="64" cy="64" r={R} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="8" />
+          <defs>
+            <linearGradient id="scoreGradStrong" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#22d3ee" />
+              <stop offset="100%" stopColor="#a78bfa" />
+            </linearGradient>
+            <linearGradient id="scoreGradMid" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#a78bfa" />
+              <stop offset="100%" stopColor="#f472b6" />
+            </linearGradient>
+          </defs>
+          <circle cx="64" cy="64" r={R} fill="none" stroke="rgba(var(--ink-rgb),0.08)" strokeWidth="8" />
           <motion.circle
             cx="64" cy="64" r={R}
             fill="none"
-            stroke={color}
+            stroke={ring}
             strokeWidth="10"
             strokeLinecap="round"
             strokeDasharray={C}
             initial={{ strokeDashoffset: C }}
             animate={{ strokeDashoffset: go ? offset : C }}
             transition={{ duration: 2, ease: "easeOut", delay: 0.4 }}
-            style={{ filter: `blur(6px)`, opacity: 0.3 }}
+            style={{ filter: `blur(6px)`, opacity: 0.35 }}
           />
           <motion.circle
             cx="64" cy="64" r={R}
             fill="none"
-            stroke={color}
+            stroke={ring}
             strokeWidth="8"
             strokeLinecap="round"
             strokeDasharray={C}
@@ -110,10 +123,10 @@ function ScoreReveal({ score, label, status }: { score: number; label: string; s
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-5xl font-bold font-display" style={{ color }}>
+          <span className="text-5xl font-bold font-display" style={{ color: "rgb(var(--ink-rgb))" }}>
             {display.toFixed(0)}
           </span>
-          <span className="text-xs text-white/25 -mt-0.5">/ 100</span>
+          <span className="text-xs -mt-0.5" style={{ color: "rgba(var(--ink-rgb),0.3)" }}>/ 100</span>
         </div>
       </div>
       <span className={`text-sm font-bold uppercase tracking-widest ${labelColor}`}>{label}</span>
@@ -122,9 +135,10 @@ function ScoreReveal({ score, label, status }: { score: number; label: string; s
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.5 }}
-          className="mt-3 text-xs text-white font-semibold bg-white/10 border border-white/20 px-3 py-1.5 rounded-full"
+          className="mt-3 text-xs font-semibold px-3 py-1.5 rounded-full"
+          style={{ color: "rgb(var(--ink-rgb))", background: "rgba(var(--ink-rgb),0.08)", border: "1px solid rgba(var(--ink-rgb),0.18)" }}
         >
-          Congratulations!
+          {t("Congratulations!")}
         </motion.div>
       )}
     </motion.div>
@@ -167,26 +181,27 @@ function MetricBar({ label, score, color, explanation }: {
 }
 
 function LockedScore({ status }: { status: string }) {
+  const { t } = useI18n();
   const isShortlisted = status === "shortlisted";
   return (
     <div className="flex flex-col items-center gap-3 py-6 px-4 text-center">
       <div
         className="w-16 h-16 rounded-2xl flex items-center justify-center"
         style={{
-          background: isShortlisted ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)",
-          border: isShortlisted ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(255,255,255,0.07)",
+          background: isShortlisted ? "rgba(var(--ink-rgb),0.08)" : "rgba(var(--ink-rgb),0.05)",
+          border: isShortlisted ? "1px solid rgba(var(--ink-rgb),0.2)" : "1px solid rgba(var(--ink-rgb),0.08)",
         }}
       >
         <Lock size={24} className={isShortlisted ? "text-white/60" : "text-white/25"} />
       </div>
       <div>
         <p className={`font-semibold ${isShortlisted ? "text-white/70" : "text-white/30"}`}>
-          {isShortlisted ? "Score will reveal soon" : "Waiting for recruiter decision"}
+          {isShortlisted ? t("Score will reveal soon") : t("Waiting for recruiter decision")}
         </p>
         <p className="text-xs text-white/20 mt-1 leading-relaxed max-w-[240px]">
           {isShortlisted
-            ? "You're shortlisted! Your AI score and full analysis will be revealed once the recruiter approves or rejects."
-            : "Your score and detailed analysis will appear here after the recruiter reviews your application."
+            ? t("You're shortlisted! Your AI score and full analysis will be revealed once the recruiter approves or rejects.")
+            : t("Your score and detailed analysis will appear here after the recruiter reviews your application.")
           }
         </p>
       </div>
@@ -228,7 +243,7 @@ function ApplicationCard({ app, idx }: { app: Application; idx: number }) {
               style={{ background: config.bg, color: config.color }}
             >
               {config.icon}
-              <span>{config.headline}</span>
+              <span>{t(config.headline)}</span>
             </div>
 
             <h3 className="font-bold text-white text-lg leading-tight mb-1">{app.job_title}</h3>
@@ -241,7 +256,7 @@ function ApplicationCard({ app, idx }: { app: Application; idx: number }) {
               </span>
             </div>
 
-            <p className="text-sm text-white/35 leading-relaxed">{config.sub}</p>
+            <p className="text-sm text-white/35 leading-relaxed">{t(config.sub)}</p>
           </div>
 
           {/* Score preview or lock */}
@@ -250,22 +265,22 @@ function ApplicationCard({ app, idx }: { app: Application; idx: number }) {
               <div className="text-center">
                 <div
                   className="text-3xl font-bold font-display"
-                  style={{ color: app.match_score >= 75 ? "#ffffff" : app.match_score >= 55 ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.35)" }}
+                  style={{ color: app.match_score >= 55 ? "rgb(var(--ink-rgb))" : "rgba(var(--ink-rgb),0.5)" }}
                 >
                   {app.match_score.toFixed(0)}
                 </div>
-                <div className="text-[10px] text-white/20">/ 100</div>
-                <div className="text-[10px] text-white/25 mt-0.5">AI Score</div>
+                <div className="text-[10px]" style={{ color: "rgba(var(--ink-rgb),0.25)" }}>/ 100</div>
+                <div className="text-[10px] text-white/25 mt-0.5">{t("AI Score")}</div>
               </div>
             ) : !scoreVisible ? (
               <div className="flex flex-col items-center gap-1">
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
+                  style={{ background: "rgba(var(--ink-rgb),0.05)", border: "1px solid rgba(var(--ink-rgb),0.08)" }}
                 >
                   <Lock size={14} className="text-white/20" />
                 </div>
-                <span className="text-[9px] text-white/20 font-medium">Locked</span>
+                <span className="text-[9px] text-white/20 font-medium">{t("Locked")}</span>
               </div>
             ) : null}
           </div>
@@ -276,9 +291,9 @@ function ApplicationCard({ app, idx }: { app: Application; idx: number }) {
           <button
             onClick={() => setExpanded(!expanded)}
             className="flex items-center gap-1.5 text-xs font-medium mt-3 transition-colors"
-            style={{ color: scoreVisible ? config.color : "rgba(255,255,255,0.25)" }}
+            style={{ color: scoreVisible ? config.color : "rgba(var(--ink-rgb),0.3)" }}
           >
-            {expanded ? "Hide details" : scoreVisible ? "View full analysis" : "View details"}
+            {expanded ? t("Hide details") : scoreVisible ? t("View full analysis") : t("View details")}
             <ChevronDown size={12} className={`transition-transform ${expanded ? "rotate-180" : ""}`} />
           </button>
         )}
@@ -365,7 +380,7 @@ function ApplicationCard({ app, idx }: { app: Application; idx: number }) {
                     /* Fallback for old scores without candidate_message */
                     <div>
                       <h4 className="text-xs font-bold uppercase tracking-widest mb-3 text-white/25">
-                        {app.status === "rejected" ? "Why your application wasn't selected" : "Why you were chosen"}
+                        {app.status === "rejected" ? t("Why your application wasn't selected") : t("Why you were chosen")}
                       </h4>
                       <div
                         className="flex items-start gap-3 p-4 rounded-2xl border mb-4"
@@ -421,7 +436,7 @@ function ApplicationCard({ app, idx }: { app: Application; idx: number }) {
                       {app.matched_skills?.length > 0 && (
                         <div>
                           <p className="text-[10px] font-bold text-white/25 uppercase tracking-widest mb-2.5">
-                            Your Matching Skills ({app.matched_skills.length})
+                            {t("Your Matching Skills")} ({app.matched_skills.length})
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {app.matched_skills.map(s => (
@@ -435,7 +450,7 @@ function ApplicationCard({ app, idx }: { app: Application; idx: number }) {
                       {app.missing_skills?.length > 0 && (
                         <div>
                           <p className="text-[10px] font-bold text-white/25 uppercase tracking-widest mb-2.5">
-                            Skills to Develop ({app.missing_skills.length})
+                            {t("Skills to Develop")} ({app.missing_skills.length})
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {app.missing_skills.map(s => (
@@ -452,7 +467,7 @@ function ApplicationCard({ app, idx }: { app: Application; idx: number }) {
                   {/* Recruiter note */}
                   {app.recruiter_notes && (
                     <div className="p-4 rounded-2xl border border-white/[0.06]" style={{ background: "rgba(255,255,255,0.02)" }}>
-                      <p className="text-[10px] font-bold text-white/25 uppercase tracking-widest mb-2">Recruiter Note</p>
+                      <p className="text-[10px] font-bold text-white/25 uppercase tracking-widest mb-2">{t("Recruiter Note")}</p>
                       <p className="text-sm text-white/40 leading-relaxed italic">"{app.recruiter_notes}"</p>
                     </div>
                   )}
@@ -531,8 +546,8 @@ export default function Applications() {
           style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
           <Sparkles size={14} className="text-white/40 mt-0.5 shrink-0" />
           <p className="text-xs text-white/35 leading-relaxed">
-            <span className="text-white/60 font-semibold">Score privacy: </span>
-            Your AI match score and detailed analysis are hidden until the recruiter approves or rejects your application. This ensures a fair process.
+            <span className="text-white/60 font-semibold">{t("Score privacy:")} </span>
+            {t("Your AI match score and detailed analysis are hidden until the recruiter approves or rejects your application. This ensures a fair process.")}
           </p>
         </div>
       </motion.div>
@@ -541,15 +556,18 @@ export default function Applications() {
       <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-none">
         {statuses.map(s => {
           const count = s === "all" ? apps.length : apps.filter(a => a.status === s).length;
+          const label = s === "all" ? t("All") : t(s.charAt(0).toUpperCase() + s.slice(1));
+          const active = filter === s;
           return (
             <button key={s} onClick={() => setFilter(s)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all capitalize ${
-                filter === s
-                  ? "bg-white text-black"
-                  : "text-white/30 hover:text-white border border-white/[0.06] hover:bg-white/[0.05]"
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                active
+                  ? "text-white shadow-sm"
+                  : "text-white/40 hover:text-white border border-white/[0.06] hover:bg-white/[0.05]"
               }`}
+              style={active ? { background: "linear-gradient(90deg,#22d3ee,#a78bfa)" } : undefined}
             >
-              {s === "all" ? `All (${count})` : `${s} (${count})`}
+              {label} ({count})
             </button>
           );
         })}
@@ -563,10 +581,10 @@ export default function Applications() {
             <FileText size={28} className="text-white/20" />
           </div>
           <p className="text-white/30 font-medium mb-1.5">
-            {filter === "all" ? "No applications yet" : `No "${filter}" applications`}
+            {filter === "all" ? t("No applications yet") : `${t("No applications")} « ${t(filter.charAt(0).toUpperCase() + filter.slice(1))} »`}
           </p>
           {filter === "all" && (
-            <p className="text-xs text-white/20">Browse jobs and apply to start tracking your progress</p>
+            <p className="text-xs text-white/20">{t("Browse jobs and apply to start tracking your progress")}</p>
           )}
         </div>
       ) : (

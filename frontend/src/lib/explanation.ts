@@ -15,6 +15,7 @@ export function localized(expl: AIExplanation, lang: "en" | "fr"): LocalizedExpl
     recommended_action:   expl.recommended_action ?? "",
     ramp_up:              expl.ramp_up ?? "",
     interview_probe_line: expl.interview_probe_line ?? "",
+    interview_questions:  expl.interview_questions ?? [],
     metric_breakdown:     expl.metric_breakdown,
     candidate_message:    expl.candidate_message ?? {
       headline: "", feedback: "", improvement_areas: [], encouragement: "",

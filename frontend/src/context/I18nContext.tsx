@@ -123,6 +123,7 @@ const FR: Record<string, string> = {
     "Forces et lacunes sur les domaines de compétences clés du poste.",
   "Why Hire": "Pourquoi recruter",
   "Concerns": "Points de vigilance",
+  "Suggested interview questions": "Questions d'entretien suggérées",
   "Score Breakdown — exactly how this score was computed":
     "Détail du score — comment ce score a été calculé",
   "Matched Skills": "Compétences correspondantes",
@@ -200,6 +201,67 @@ const FR: Record<string, string> = {
   "Update the job details below": "Mettez à jour les détails ci-dessous",
   "Fill in the details to attract the best candidates":
     "Remplissez les détails pour attirer les meilleurs candidats",
+
+  // ── Candidate jobs (browse / detail) ──
+  "Discover opportunities that fit your profile":
+    "Découvrez les opportunités qui correspondent à votre profil",
+  "Browse available positions": "Parcourez les postes disponibles",
+  "Search jobs, skills, companies…": "Rechercher offres, compétences, entreprises…",
+  "All types": "Tous les types",
+  "No jobs found": "Aucune offre trouvée",
+  "Salary range": "Fourchette de salaire",
+  "MAD / year": "MAD / an",
+  "Description": "Description",
+  "Requirements": "Exigences",
+  "Applied": "Déjà postulé",
+  "Apply now": "Postuler",
+  "Applying…": "Envoi…",
+  "Cover letter": "Lettre de motivation",
+  "Write a brief cover letter (optional)…":
+    "Rédigez une brève lettre de motivation (optionnel)…",
+  "Application submitted!": "Candidature envoyée !",
+  "Application failed": "Échec de la candidature",
+  "Select a job to view details": "Sélectionnez une offre pour voir les détails",
+
+  // ── Candidate applications (status + score reveal) ──
+  "All": "Tous",
+  "AI Score": "Score IA",
+  "Congratulations!": "Félicitations !",
+  "Under Review": "En cours d'examen",
+  "Your application has been submitted and is waiting for the recruiter.":
+    "Votre candidature a été envoyée et attend le recruteur.",
+  "Being Reviewed": "En cours d'évaluation",
+  "The recruiter has opened your application. A decision is coming soon.":
+    "Le recruteur a ouvert votre candidature. Une décision arrive bientôt.",
+  "You're Shortlisted!": "Vous êtes présélectionné !",
+  "Great news — you made the shortlist! The recruiter will make a final decision soon.":
+    "Bonne nouvelle — vous êtes sur la liste restreinte ! Le recruteur prendra bientôt sa décision finale.",
+  "You Got the Offer!": "Vous avez décroché l'offre !",
+  "Congratulations! The recruiter has selected you. See your full AI score and analysis below.":
+    "Félicitations ! Le recruteur vous a sélectionné. Consultez votre score IA complet et l'analyse ci-dessous.",
+  "Not Selected This Time": "Non retenu cette fois",
+  "The recruiter made their decision. See your score and detailed feedback to improve for next time.":
+    "Le recruteur a pris sa décision. Consultez votre score et les retours détaillés pour progresser la prochaine fois.",
+  "Hide details": "Masquer les détails",
+  "View full analysis": "Voir l'analyse complète",
+  "View details": "Voir les détails",
+  "Locked": "Verrouillé",
+  "Score will reveal soon": "Le score sera bientôt révélé",
+  "Waiting for recruiter decision": "En attente de la décision du recruteur",
+  "You're shortlisted! Your AI score and full analysis will be revealed once the recruiter approves or rejects.":
+    "Vous êtes présélectionné ! Votre score IA et l'analyse complète seront révélés une fois que le recruteur aura accepté ou refusé.",
+  "Your score and detailed analysis will appear here after the recruiter reviews your application.":
+    "Votre score et l'analyse détaillée apparaîtront ici après l'examen de votre candidature par le recruteur.",
+  "Why your application wasn't selected": "Pourquoi votre candidature n'a pas été retenue",
+  "Why you were chosen": "Pourquoi vous avez été choisi",
+  "Recruiter Note": "Note du recruteur",
+  "Score privacy:": "Confidentialité du score :",
+  "Your AI match score and detailed analysis are hidden until the recruiter approves or rejects your application. This ensures a fair process.":
+    "Votre score de correspondance IA et l'analyse détaillée restent masqués jusqu'à ce que le recruteur accepte ou refuse votre candidature. Cela garantit un processus équitable.",
+  "No applications yet": "Aucune candidature pour le moment",
+  "No applications": "Aucune candidature",
+  "Browse jobs and apply to start tracking your progress":
+    "Parcourez les offres et postulez pour suivre votre progression",
 };
 
 interface I18nContextType {

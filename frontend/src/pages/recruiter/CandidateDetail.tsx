@@ -6,6 +6,7 @@ import {
   ThumbsUp, ThumbsDown, Brain, Trophy,
   AlertCircle, BarChart3, Loader2, Sparkles,
   Mail, FileText, Calendar, Radar as RadarIcon, X, Download, ExternalLink,
+  MessageSquareQuote,
 } from "lucide-react";
 import {
   getJobCandidates, getJob, updateApplicationStatus,
@@ -133,6 +134,7 @@ export default function CandidateDetail() {
   const [cvData, setCvData]       = useState<ApplicationCV | null>(null);
   const [cvLoading, setCvLoading] = useState(false);
   const [pdfBusy, setPdfBusy]     = useState(false);
+  const [pdfUrl, setPdfUrl]       = useState<string | null>(null);
 
   useEffect(() => {
     const jid = Number(jobId);
@@ -169,6 +171,9 @@ export default function CandidateDetail() {
     try {
       const data = await getApplicationCv(app.id);
       setCvData(data);
+      if (data.has_file && !pdfUrl) {
+        try { setPdfUrl(await getApplicationCvFileUrl(app.id)); } catch { /* keep text fallback */ }
+      }
     } catch {
       toastError("Couldn't load CV", "This candidate may not have a CV on file.");
       setCvOpen(false);
@@ -418,6 +423,36 @@ export default function CandidateDetail() {
           </motion.div>
         )}
 
+        {/* Suggested interview questions */}
+        {L?.interview_questions && L.interview_questions.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.14 }}
+            className="rounded-3xl border border-white/[0.08] p-6 mb-6"
+            style={{ background: "var(--panel)" }}
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <MessageSquareQuote size={14} className="text-iridescent-soft" />
+              <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-iridescent-soft">
+                {t("Suggested interview questions")}
+              </h3>
+            </div>
+            <div className="space-y-2.5">
+              {L.interview_questions.map((q, i) => (
+                <div key={i} className="flex items-start gap-3 p-3.5 rounded-2xl border border-white/[0.06]"
+                  style={{ background: "rgba(var(--ink-rgb),0.02)" }}>
+                  <span className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-black"
+                    style={{ background: "linear-gradient(135deg,#22d3ee,#a78bfa)" }}>
+                    {i + 1}
+                  </span>
+                  <p className="text-sm text-white/65 leading-relaxed">{q}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
         {/* Metric breakdown — always visible, no toggles */}
         {breakdown && (
           <motion.div
@@ -573,7 +608,7 @@ export default function CandidateDetail() {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.94, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-2xl max-h-[85vh] flex flex-col rounded-3xl border border-white/[0.10] overflow-hidden"
+              className="w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl border border-white/[0.10] overflow-hidden"
               style={{ background: "var(--panel-2)", backdropFilter: "blur(24px)" }}
             >
               {/* Modal header */}
@@ -611,14 +646,20 @@ export default function CandidateDetail() {
               </div>
 
               {/* Modal body */}
-              <div className="flex-1 overflow-y-auto p-6">
+              <div className="flex-1 overflow-hidden">
                 {cvLoading ? (
                   <div className="flex flex-col items-center justify-center py-20 gap-3">
                     <Loader2 size={24} className="animate-spin text-iridescent-soft" />
                     <p className="text-sm text-white/35">{t("Loading CV…")}</p>
                   </div>
+                ) : pdfUrl ? (
+                  <iframe
+                    src={pdfUrl}
+                    title="CV PDF"
+                    className="w-full h-[74vh] bg-white"
+                  />
                 ) : cvData?.has_text ? (
-                  <pre className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap font-body">
+                  <pre className="h-full overflow-y-auto p-6 text-sm text-white/70 leading-relaxed whitespace-pre-wrap font-body">
                     {cvData.cv_text}
                   </pre>
                 ) : (

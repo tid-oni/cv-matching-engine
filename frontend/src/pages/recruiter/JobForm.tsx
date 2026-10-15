@@ -74,12 +74,12 @@ export default function JobForm() {
 
   if (fetchLoading) return (
     <div className="flex items-center justify-center min-h-[60vh]">
-      <Loader2 className="animate-spin text-white/40" size={28} />
+      <Loader2 className="animate-spin text-slate-400" size={28} />
     </div>
   );
 
-  const inputCls = "w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/8 text-white placeholder-white/20 text-sm focus:outline-none focus:border-white/20 transition-all";
-  const labelCls = "block text-xs font-medium text-white/40 mb-1.5";
+  const inputCls = "w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 transition-all";
+  const labelCls = "block text-xs font-semibold text-slate-600 mb-1.5";
 
   return (
     <div className="max-w-2xl mx-auto px-4 pt-24 pb-12 relative">
@@ -87,20 +87,20 @@ export default function JobForm() {
       <div className="blob-magenta animate-blob-2 absolute bottom-0 -right-10" style={{ width: 300, height: 300, opacity: 0.18 }} />
 
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="relative z-10">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-white/40 hover:text-white mb-6 transition-colors">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 mb-6 transition-colors">
           <ArrowLeft size={15} /> {t("Back")}
         </button>
-        <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-iridescent-soft mb-1">
+        <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-cyan-600 mb-1">
           {isEdit ? t("Edit Job") : t("New Job Post")}
         </p>
-        <h1 className="text-3xl font-bold font-display text-white mb-1">{isEdit ? t("Edit job offer") : t("Post a job")}</h1>
-        <p className="text-white/40 text-sm mb-8">
+        <h1 className="text-3xl font-bold font-display text-slate-900 mb-1">{isEdit ? t("Edit job offer") : t("Post a job")}</h1>
+        <p className="text-slate-500 text-sm mb-8">
           {isEdit ? t("Update the job details below") : t("Fill in the details to attract the best candidates")}
         </p>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-        className="rounded-2xl border border-white/8 p-8" style={{ background: "rgba(8,8,8,0.85)", backdropFilter: "blur(20px)" }}>
+        className="rounded-2xl border border-slate-200 bg-white shadow-sm p-8">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid sm:grid-cols-2 gap-5">
             <div>
@@ -122,7 +122,7 @@ export default function JobForm() {
               <label className={labelCls}>Type</label>
               <select value={form.job_type} onChange={set("job_type")} className={inputCls}>
                 {["full-time","part-time","remote","contract","internship"].map(t => (
-                  <option key={t} value={t} className="bg-black">{t}</option>
+                  <option key={t} value={t} className="bg-white text-slate-800">{t}</option>
                 ))}
               </select>
             </div>
@@ -130,7 +130,7 @@ export default function JobForm() {
               <label className={labelCls}>Level</label>
               <select value={form.experience_level} onChange={set("experience_level")} className={inputCls}>
                 {["junior","mid","senior","lead"].map(t => (
-                  <option key={t} value={t} className="bg-black">{t}</option>
+                  <option key={t} value={t} className="bg-white text-slate-800">{t}</option>
                 ))}
               </select>
             </div>
@@ -138,12 +138,12 @@ export default function JobForm() {
 
           <div className="grid sm:grid-cols-2 gap-5">
             <div>
-              <label className={labelCls}>Salary min (€/year)</label>
-              <input type="number" value={form.salary_min} onChange={set("salary_min")} className={inputCls} placeholder="35000" />
+              <label className={labelCls}>Salary min (MAD/year)</label>
+              <input type="number" value={form.salary_min} onChange={set("salary_min")} className={inputCls} placeholder="60000" />
             </div>
             <div>
-              <label className={labelCls}>Salary max (€/year)</label>
-              <input type="number" value={form.salary_max} onChange={set("salary_max")} className={inputCls} placeholder="55000" />
+              <label className={labelCls}>Salary max (MAD/year)</label>
+              <input type="number" value={form.salary_max} onChange={set("salary_max")} className={inputCls} placeholder="120000" />
             </div>
           </div>
 
@@ -154,16 +154,16 @@ export default function JobForm() {
                 onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addSkill())}
                 className={`${inputCls} flex-1`} placeholder="e.g. Python, React…" />
               <button type="button" onClick={addSkill}
-                className="px-3 py-2.5 rounded-xl bg-white/[0.06] border border-white/10 text-white/60 hover:bg-white/[0.1] hover:text-white transition-all">
+                className="px-3 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-all">
                 <Plus size={16} />
               </button>
             </div>
             {skills.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {skills.map(s => (
-                  <span key={s} className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg bg-white/[0.06] text-white/60 border border-white/10">
+                  <span key={s} className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg bg-cyan-50 text-cyan-700 border border-cyan-200">
                     {s}
-                    <button type="button" onClick={() => removeSkill(s)} className="hover:text-white ml-0.5">
+                    <button type="button" onClick={() => removeSkill(s)} className="hover:text-cyan-900 ml-0.5">
                       <X size={11} />
                     </button>
                   </span>
@@ -185,16 +185,16 @@ export default function JobForm() {
           </div>
 
           {error && (
-            <p className="text-white/50 text-sm bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2">{error}</p>
+            <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-xl px-3 py-2">{error}</p>
           )}
 
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => navigate(-1)}
-              className="px-5 py-2.5 rounded-xl border border-white/10 text-white/40 hover:text-white text-sm transition-colors">
+              className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50 text-sm transition-colors">
               Cancel
             </button>
             <button type="submit" disabled={loading}
-              className="flex-1 py-2.5 rounded-xl bg-white hover:bg-white/90 disabled:opacity-50 text-black font-semibold text-sm transition-all flex items-center justify-center gap-2">
+              className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-500 hover:opacity-90 disabled:opacity-50 text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-sm">
               {loading ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
               {loading ? "Saving…" : isEdit ? "Save changes" : "Post job"}
             </button>

@@ -84,6 +84,7 @@ export interface LocalizedExplanation {
   recommended_action: string;
   ramp_up: string;
   interview_probe_line: string;
+  interview_questions: string[];
   metric_breakdown: ScoreBreakdown;
   candidate_message: CandidateMessage;
 }
@@ -106,6 +107,7 @@ export interface AIExplanation {
   recommended_action?: string;
   ramp_up?: string;
   interview_probe_line?: string;
+  interview_questions?: string[];
   i18n?: { en: LocalizedExplanation; fr: LocalizedExplanation };
 }
 

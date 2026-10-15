@@ -265,8 +265,8 @@ textarea, input { font-family: "DM Sans", sans-serif; }
 /* ── Field ────────────────────────────────────────── */
 .field {
   width: 100%;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.38);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 12px;
   padding: 12px 16px;
   color: #fff;
@@ -276,9 +276,9 @@ textarea, input { font-family: "DM Sans", sans-serif; }
   outline: none;
 }
 .field:focus {
-  border-color: rgba(255,255,255,0.4);
-  background: rgba(255,255,255,0.06);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.35);
+  background: rgba(0,0,0,0.5);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.05);
 }
 .field::placeholder { color: rgba(255,255,255,0.25); }
 
@@ -606,6 +606,7 @@ html.theme-light .liquid-glass {
 :root {
   --panel:   rgba(10,14,26,0.78);
   --panel-2: rgba(8,12,22,0.97);
+  --ink-rgb: 255,255,255;   /* primary content color (RGB triplet) — white on dark */
 }
 
 /* ═══════════════════════════════════════════════════════════════ *
@@ -614,6 +615,7 @@ html.theme-light .liquid-glass {
 html.theme-light {
   --panel:   #ffffff;
   --panel-2: #ffffff;
+  --ink-rgb: 15,17,23;      /* flips inline-styled content to dark ink on light */
 }
 
 html.theme-light body {

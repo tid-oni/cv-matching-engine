@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { Check, ChevronRight, Sparkles, Zap, Building2, Rocket } from "lucide-react";
-import { MetalButton } from "@/components/ui/metal-button";
 import { Spotlight } from "@/components/ui/spotlight";
 import { WebGLShader } from "@/components/ui/web-gl-shader";
 
@@ -46,9 +45,9 @@ const PLANS: Plan[] = [
     name: "Starter",
     icon: Rocket,
     blurb: "For small teams making their first data-driven hires.",
-    monthly: 129,
-    annual: 99,
-    priceNote: "per seat / month",
+    monthly: 249,
+    annual: 199,
+    priceNote: "base · per seat / month · volume tiers",
     cta: "Start free trial",
     to: "/register?role=recruiter",
     features: [
@@ -61,24 +60,24 @@ const PLANS: Plan[] = [
     ],
   },
   {
-    id: "growth",
-    name: "Growth",
+    id: "premium",
+    name: "Premium",
     icon: Zap,
-    blurb: "For scaling recruiting teams that hire continuously.",
-    monthly: 429,
-    annual: 349,
+    blurb: "Base 249 + premium option (+99 MAD), for teams hiring continuously.",
+    monthly: 348,
+    annual: 279,
     priceNote: "per seat / month",
     cta: "Start free trial",
     to: "/register?role=recruiter",
     featured: true,
     features: [
-      "15 recruiter seats",
+      "Everything in Starter, plus:",
       "50 active job posts",
       "5,000 candidates scored / month",
       "Batch ranking & leaderboards",
       "URL signal extraction (GitHub, LinkedIn)",
       "Analytics & scoring dashboards",
-      "Priority support + API access",
+      "Premium API access + priority support",
     ],
   },
   {
@@ -94,10 +93,11 @@ const PLANS: Plan[] = [
     features: [
       "Unlimited seats & job posts",
       "Unlimited candidate scoring",
+      "Unlimited premium API",
+      "Dedicated HR services & onboarding",
       "SSO / SAML & audit logs",
       "Custom model fine-tuning",
       "Dedicated success manager + SLA",
-      "On-prem / private-VPC deployment",
     ],
   },
 ];
@@ -119,7 +119,6 @@ function PriceDisplay({ plan, annual }: { plan: Plan; annual: boolean }) {
   const value = annual ? plan.annual! : plan.monthly;
   return (
     <div className="flex items-baseline gap-1">
-      <span className="text-2xl font-semibold text-white/40 font-display">$</span>
       <span
         className={`text-5xl font-bold font-display tracking-tight tabular-nums ${
           plan.featured ? "text-iridescent-animated" : "text-white"
@@ -127,6 +126,7 @@ function PriceDisplay({ plan, annual }: { plan: Plan; annual: boolean }) {
       >
         {value}
       </span>
+      <span className="text-2xl font-semibold text-white/40 font-display ml-1">MAD</span>
       <span className="text-sm text-white/35 ml-1">/ mo</span>
     </div>
   );
@@ -166,7 +166,8 @@ export function PricingSection() {
           </h2>
           <p className="gs-reveal text-white/30 text-sm sm:text-base max-w-xl mx-auto mt-5 leading-relaxed">
             Transparent, per-seat pricing for recruiting teams of every size.
-            Every plan includes the full explainable-AI matching engine.
+            Every plan includes the full explainable-AI matching engine —
+            and it's always <span className="text-white/60 font-medium">free for candidates</span>.
           </p>
 
           {/* Billing toggle */}
@@ -279,11 +280,25 @@ export function PricingSection() {
 
                   {/* CTA */}
                   {plan.featured ? (
-                    <Link to={plan.to} className="relative group inline-block mb-7">
+                    <Link to={plan.to} className="group relative block mb-7">
                       <span className="btn-halo" />
-                      <MetalButton className="relative w-full h-11 px-6 text-sm gap-2">
-                        {plan.cta} <ChevronRight size={14} />
-                      </MetalButton>
+                      <span
+                        className="relative flex items-center justify-center gap-2 w-full h-11 px-6 rounded-full text-sm font-bold text-black overflow-hidden transition-transform duration-200 group-hover:scale-[1.03] group-active:scale-95"
+                        style={{
+                          background: "linear-gradient(135deg, #22d3ee 0%, #a78bfa 50%, #f472b6 100%)",
+                          boxShadow: "0 10px 30px rgba(167,139,250,0.38), inset 0 1px 0 rgba(255,255,255,0.55)",
+                        }}
+                      >
+                        {/* glossy top highlight */}
+                        <span className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
+                          style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.45), transparent)" }} />
+                        {/* sweeping shine on hover */}
+                        <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out pointer-events-none"
+                          style={{ background: "linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.45) 50%, transparent 65%)" }} />
+                        <span className="relative flex items-center gap-2">
+                          {plan.cta} <ChevronRight size={14} />
+                        </span>
+                      </span>
                     </Link>
                   ) : (
                     <Link
